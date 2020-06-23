@@ -77,8 +77,6 @@ for (let i = 0; i < HatsNodeList.length; i++) {
   // creating a Hat object and adding it to the HatArray for storing the hats-data
   const hat = new Hat(HTMLname, HTMLprice, HTMLcolor, HTMLimageHref);
 
-  
-
   HatArray.push(hat);
 }
 
@@ -88,7 +86,15 @@ for (let i = 0; i < HatArray.length; i++) {
 }
 
 /* ----------------- Filter By Color ----------------- */
-// the NodeList that contains all of the color-filter-buttons
+// creating 'All' button
+let buttonAll = document.createElement('button');
+buttonAll.className = 'btn btn-outline-secondary';
+buttonAll.type = 'button';
+buttonAll.textContent = 'All';
+document.querySelector('.btn-group').appendChild(buttonAll);
+
+
+// the NodeList that contains all of the color-filter-buttons (included All button)
 const filterByColorNodeList = document.querySelectorAll('.btn-group button');
 
 // for changing 'active' class for color filter button
@@ -107,7 +113,7 @@ filterByColorNodeList.forEach(function (filterButton) {
   });
 });
 
-function filterHatByColor (filter) {
+function filterHatByColor(filter) {
   let HTMLNodeList = document.querySelectorAll('.fromData');
   // all hats will be removed from page
   for (let i = 0; i < HTMLNodeList.length; i++) {
@@ -116,10 +122,10 @@ function filterHatByColor (filter) {
 
   // if the hats' color is choosen filter, they will display on the page
   for (let i = 0; i < HTMLNodeList.length; i++) {
-    if (HTMLNodeList[i].classList.contains(filter.toLowerCase())){
+    if (HTMLNodeList[i].classList.contains(filter.toLowerCase())) {
       HTMLNodeList[i].style.display = 'inline';
-    } else if (filter == 'All') {
-      console.log('list all');
+    } else if (filter === 'All') {
+      HTMLNodeList[i].style.display = 'inline';
     }
   }
 }
