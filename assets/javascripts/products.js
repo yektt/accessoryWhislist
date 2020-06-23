@@ -63,22 +63,41 @@ const HatArray = [];
 const HatsNodeList = document.querySelectorAll('.accessory');
 let HTMLname, HTMLprice, HTMLcolor, HTMLimageHref;
 
-//for getting informations about hats form HTML part
+// for getting informations about hats form HTML part
 for (let i = 0; i < HatsNodeList.length; i++) {
   HTMLprice = HatsNodeList[i].getElementsByClassName('currency')[0].textContent;
   HTMLimageHref = HatsNodeList[i].getElementsByClassName('card-img-top')[0].src;
   HTMLname = HatsNodeList[i].getElementsByClassName('card-body')[0].querySelector('h5').textContent;
   HTMLcolor = HatsNodeList[i].getElementsByClassName('card-body')[0].querySelector('em').textContent;
 
-  //static hats won't show up our page any more
+  // static hats won't show up our page any more
   HatsNodeList[i].style.display = 'none';
 
-  //creating a Hat object and adding it to the HatArray for storing the hats-data
+  // creating a Hat object and adding it to the HatArray for storing the hats-data
   const hat = new Hat(HTMLname, HTMLprice, HTMLcolor, HTMLimageHref);
   HatArray.push(hat);
 }
 
-//for rendering all of the hat objects.
+// for rendering all of the hat objects.
 for (let i = 0; i < HatArray.length; i++) {
   displayHat(HatArray[i]);
 }
+
+/* ----------------- Filter By Color ----------------- */
+// the NodeList that contains all of the color-filter-buttons
+const filterByColorNodeList = document.querySelectorAll('.btn-group button');
+
+// for changing 'active' class for color filter button
+function highlightSelectedFilter(button) {
+  for (let i = 0; i < filterByColorNodeList.length; i++) {
+    filterByColorNodeList[i].classList.remove('active');
+  }
+  button.classList.add('active');
+}
+
+// Listening the all of the filter buttons whether any of them clicked.
+filterByColorNodeList.forEach(function (filterButton) {
+  filterButton.addEventListener('click', function () {
+    highlightSelectedFilter(filterButton);
+  });
+});
