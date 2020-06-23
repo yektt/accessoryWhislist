@@ -43,7 +43,8 @@ function displayHat(hat) {
   card.className = 'card my-3';
 
   let accessory = document.createElement('div');
-  accessory.className = 'accessory col-sm-4';
+  accessory.className = 'accessory col-sm-4 fromData';
+  accessory.classList.add(hat.color);
 
   accessory.appendChild(card);
   card.appendChild(currency);
@@ -75,6 +76,9 @@ for (let i = 0; i < HatsNodeList.length; i++) {
 
   // creating a Hat object and adding it to the HatArray for storing the hats-data
   const hat = new Hat(HTMLname, HTMLprice, HTMLcolor, HTMLimageHref);
+
+  
+
   HatArray.push(hat);
 }
 
@@ -93,11 +97,29 @@ function highlightSelectedFilter(button) {
     filterByColorNodeList[i].classList.remove('active');
   }
   button.classList.add('active');
+  filterHatByColor(button.textContent);
 }
 
-// Listening the all of the filter buttons whether any of them clicked.
+// Listening to all of the filter buttons to detect whether any of them is clicked.  
 filterByColorNodeList.forEach(function (filterButton) {
   filterButton.addEventListener('click', function () {
     highlightSelectedFilter(filterButton);
   });
 });
+
+function filterHatByColor (filter) {
+  let HTMLNodeList = document.querySelectorAll('.fromData');
+  // all hats will be removed from page
+  for (let i = 0; i < HTMLNodeList.length; i++) {
+    HTMLNodeList[i].style.display = 'none';
+  }
+
+  // if the hats' color is choosen filter, they will display on the page
+  for (let i = 0; i < HTMLNodeList.length; i++) {
+    if (HTMLNodeList[i].classList.contains(filter.toLowerCase())){
+      HTMLNodeList[i].style.display = 'inline';
+    } else if (filter == 'All') {
+      console.log('list all');
+    }
+  }
+}
