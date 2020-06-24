@@ -146,7 +146,16 @@ function filterAccessoriesByColor(filter) {
 let accessoryArray = [];
 let accessory;
 
-// the NodeList that contains all of the color-filter-buttons 
+// creating 'Gloves' button
+let buttonGloves = document.createElement('button');
+buttonGloves.className = 'nav-link btn btn-outline-secondary mr-3';
+buttonGloves.textContent = 'Gloves';
+let listItem = document.createElement('li');
+listItem.className = 'nav-item';
+listItem.appendChild(buttonGloves);
+document.querySelector('.navbar-nav').appendChild(listItem);
+
+// the NodeList that contains all of the color-filter-buttons (included Gloves button)
 const filterByAccessoriesNodeList = document.querySelectorAll('.navbar-nav button');
 
 // Listening to all of the type-filter buttons to detect whether any of them is clicked.  
