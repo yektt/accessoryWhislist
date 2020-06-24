@@ -11,7 +11,7 @@ Accessory.prototype.toString = function () {
 }
 
 // it's taking one accessory object and creating HTML component
-function displayAccessory(accessory) {
+function displayAccessory(accessory, type) {
   let button = document.createElement('button');
   button.className = 'btn btn-outline-primary';
   button.textContent = 'Add to whislist!';
@@ -45,6 +45,7 @@ function displayAccessory(accessory) {
   let div = document.createElement('div');
   div.className = 'accessory col-sm-4 fromData';
   div.classList.add(accessory.color);
+  div.classList.add(type);
 
   div.appendChild(card);
   card.appendChild(currency);
@@ -57,6 +58,13 @@ function displayAccessory(accessory) {
 
   let products = document.getElementById('products');
   products.appendChild(div);
+}
+
+// for display all the hat objects.
+function displayHats() {
+  for (let i = 0; i < HatArray.length; i++) {
+    displayAccessory(HatArray[i], 'hat');
+  }
 }
 
 // HatNodeList -> from static HTML
@@ -76,14 +84,9 @@ for (let i = 0; i < HatsNodeList.length; i++) {
 
   // creating a Hat object and adding it to the HatArray for storing the hats-data
   const hat = new Accessory(HTMLname, HTMLprice, HTMLcolor, HTMLimageHref);
-
   HatArray.push(hat);
 }
-
-// for rendering all of the hat objects.
-for (let i = 0; i < HatArray.length; i++) {
-  displayAccessory(HatArray[i]);
-}
+displayHats();
 
 /* ----------------- Filter By Color ----------------- */
 // creating 'All' button
@@ -102,7 +105,10 @@ function highlightSelectedFilter(button) {
     for (let i = 0; i < filterByAccessoriesNodeList.length; i++) {
       filterByAccessoriesNodeList[i].classList.remove('active');
     }
-    filterAccessoriesByType(button.textContent);
+    cleanDOM();
+    if (button.textContent.toLowerCase() == 'hats') {
+      displayHats();
+    }
   } else {
     for (let i = 0; i < filterByColorNodeList.length; i++) {
       filterByColorNodeList[i].classList.remove('active');
@@ -137,34 +143,55 @@ function filterAccessoriesByColor(filter) {
 }
 
 /* ----------------- Socks and Sunglasses ----------------- */
-// the NodeList that contains all of the color-filter-buttons (included All button)
+let accessoryArray = [];
+let accessory;
+
+// the NodeList that contains all of the color-filter-buttons 
 const filterByAccessoriesNodeList = document.querySelectorAll('.navbar-nav button');
-const SocksArray = [];
 
 // Listening to all of the type-filter buttons to detect whether any of them is clicked.  
 filterByAccessoriesNodeList.forEach(function (typeFilterButton) {
   typeFilterButton.addEventListener('click', function () {
     highlightSelectedFilter(typeFilterButton);
-    loadRemoteAccessories(typeFilterButton.textContent);
+    if (typeFilterButton.textContent != 'Hats')
+      loadRemoteAccessories(typeFilterButton.textContent.toLowerCase());
   });
 });
 
 // 
-function loadRemoteAccessories (filter) {
-  
-  if (filter.toLowerCase() == 'socks') {
-    let request = new XMLHttpRequest();
-    request.open('GET', './socks.json');
-    request.onload = function () {
-      let accessoriesArray = JSON.parse(request.responseText);
-    };
-    request.send();
-  } else if (filter.toLowerCase() == 'sunglasses') {
-    
+function loadRemoteAccessories(filter) {
+
+  let request = new XMLHttpRequest();
+  request.open('GET', './' + filter + '.json');
+  request.onload = function () {
+    let accessoriesArray = JSON.parse(request.responseText);
+    for (let i = 0; i < accessoriesArray.length; i++) {
+      accessory = new Accessory(accessoriesArray[i].name, accessoriesArray[i].price, accessoriesArray[i].color, accessoriesArray[i].imageHref);
+      accessoryArray.push(accessory);
+    }
+    showAccessories(accessoryArray, filter);
+    accessoryArray = [];
+  };
+  request.send();
+}
+
+function showAccessories(accessoriesArray, type) {
+  for (let i = 0; i < accessoriesArray.length; i++) {
+    displayAccessory(accessoriesArray[i], type);
   }
 }
 
-//
-function filterAccessoriesByType(filter) {
-  console.log ('type filter here')
+// for cleaning the DOM, otherwise the objects will show up more than one time.
+function cleanDOM() {
+  removeElementsFromDOM('hat');
+  removeElementsFromDOM('socks');
+  removeElementsFromDOM('sunglasses');
+  removeElementsFromDOM('gloves');
+}
+
+function removeElementsFromDOM(type) {
+  let removeElement = document.querySelectorAll('.' + type);
+  for (let i = 0; i < removeElement.length; i++) {
+    removeElement[i].remove();
+  }
 }
