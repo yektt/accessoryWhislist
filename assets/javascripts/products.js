@@ -93,15 +93,20 @@ buttonAll.type = 'button';
 buttonAll.textContent = 'All';
 document.querySelector('.btn-group').appendChild(buttonAll);
 
-
 // the NodeList that contains all of the color-filter-buttons (included All button)
 const filterByColorNodeList = document.querySelectorAll('.btn-group button');
 
 // for changing 'active' class for color filter button
 function highlightSelectedFilter(button) {
-  
-  for (let i = 0; i < filterByColorNodeList.length; i++) {
-    filterByColorNodeList[i].classList.remove('active');
+  if (button.classList.contains('nav-link')) {
+    for (let i = 0; i < filterByAccessoriesNodeList.length; i++) {
+      filterByAccessoriesNodeList[i].classList.remove('active');
+    }
+    filterAccessoriesByType(button.textContent);
+  } else {
+    for (let i = 0; i < filterByColorNodeList.length; i++) {
+      filterByColorNodeList[i].classList.remove('active');
+    }
     filterAccessoriesByColor(button.textContent);
   }
   button.classList.add('active');
@@ -131,3 +136,35 @@ function filterAccessoriesByColor(filter) {
   }
 }
 
+/* ----------------- Socks and Sunglasses ----------------- */
+// the NodeList that contains all of the color-filter-buttons (included All button)
+const filterByAccessoriesNodeList = document.querySelectorAll('.navbar-nav button');
+const SocksArray = [];
+
+// Listening to all of the type-filter buttons to detect whether any of them is clicked.  
+filterByAccessoriesNodeList.forEach(function (typeFilterButton) {
+  typeFilterButton.addEventListener('click', function () {
+    highlightSelectedFilter(typeFilterButton);
+    loadRemoteAccessories(typeFilterButton.textContent);
+  });
+});
+
+// 
+function loadRemoteAccessories (filter) {
+  
+  if (filter.toLowerCase() == 'socks') {
+    let request = new XMLHttpRequest();
+    request.open('GET', './socks.json');
+    request.onload = function () {
+      let accessoriesArray = JSON.parse(request.responseText);
+    };
+    request.send();
+  } else if (filter.toLowerCase() == 'sunglasses') {
+    
+  }
+}
+
+//
+function filterAccessoriesByType(filter) {
+  console.log ('type filter here')
+}
