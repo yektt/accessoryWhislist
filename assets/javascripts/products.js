@@ -1,3 +1,4 @@
+
 // construction function for Accessories
 function Accessory(name, price, color, imageHref) {
   this.name = name,
@@ -74,18 +75,20 @@ const HatsNodeList = document.querySelectorAll('.accessory');
 let HTMLname, HTMLprice, HTMLcolor, HTMLimageHref;
 
 // for getting informations about hats form HTML part
-for (let i = 0; i < HatsNodeList.length; i++) {
-  HTMLprice = HatsNodeList[i].getElementsByClassName('currency')[0].textContent;
-  HTMLimageHref = HatsNodeList[i].getElementsByClassName('card-img-top')[0].src;
-  HTMLname = HatsNodeList[i].getElementsByClassName('card-body')[0].querySelector('h5').textContent;
-  HTMLcolor = HatsNodeList[i].getElementsByClassName('card-body')[0].querySelector('em').textContent;
-
-  // static hats won't show up our page any more
-  HatsNodeList[i].style.display = 'none';
+function createObjectFromHTML (NodeList) {
+  HTMLprice = NodeList.getElementsByClassName('currency')[0].textContent;
+  HTMLimageHref = NodeList.getElementsByClassName('card-img-top')[0].src;
+  HTMLname = NodeList.getElementsByClassName('card-body')[0].querySelector('h5').textContent;
+  HTMLcolor = NodeList.getElementsByClassName('card-body')[0].querySelector('em').textContent;
 
   // creating a Hat object and adding it to the HatArray for storing the hats-data
-  const hat = new Accessory(HTMLname, HTMLprice, HTMLcolor, HTMLimageHref);
-  HatArray.push(hat);
+  const accessory = new Accessory(HTMLname, HTMLprice, HTMLcolor, HTMLimageHref);
+  return accessory;
+  
+}
+for (let i = 0; i < HatsNodeList.length; i++) {
+  HatsNodeList[i].style.display = 'none';
+  HatArray.push(createObjectFromHTML(HatsNodeList[i]));
 }
 displayHats();
 
@@ -209,31 +212,45 @@ function removeElementsFromDOM(type) {
 
 
 /* ----------------- The wishlist ----------------- */
-
+let storeArray = [];
 function wish () {
   let NodeButton = document.querySelectorAll('.card-body button');
   NodeButton.forEach(function(wishedButton){
     wishedButton.addEventListener('click', function() {
+      let wishedItem = wishedButton.parentNode.parentNode.parentNode;
       if (wishedButton.classList.contains('clicked'))
       {
         wishedButton.textContent = 'Add to wishlist!';
         wishedButton.classList.remove('clicked', 'btn-outline-danger');
         wishedButton.classList.add('btn-outline-primary');
         // function for deleting element from DOM and wishlist
-      } else {
+      } else if (localStorage.length < 4) {
         wishedButton.textContent = 'Remove';
         wishedButton.classList.remove('btn-outline-primary');
-        wishedButton.classList.add('clicked', 'btn-outline-danger');
-        let wishedItem = wishedButton.parentNode.parentNode;
+        wishedButton.classList.add('clicked', 'btn-outline-danger'); 
         addToWishList(wishedItem);
+      } else {
+        // wish list is full
       }
     });
   });
 }
 
 function addToWishList(wantedAccessory) {
-  
+  for (let i = 0; i < storeArray.length; i++ ) {
+    let number = i+1
+    localStorage.removeItem('accessory' + number, storeArray[i]);
+  }
+  storeArray.unshift(createObjectFromHTML(wantedAccessory));
+  localStorage.setItem('storeArray', JSON.stringify(storeArray));
+  for (let i = 0; i < storeArray.length; i++ ) {
+    let number = i+1
+    localStorage.setItem('accessory' + number, storeArray[i]);
+    //localStorage.getItem('accessory' + number).style.display = 'none';
+  }
+  //console.log(JSON.parse(localStorage.getItem('storeArray')).length);
 }
 
-
-
+if (localStorage.length == 0) {
+  console.log('no products storing');
+}
