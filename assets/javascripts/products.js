@@ -14,7 +14,7 @@ Accessory.prototype.toString = function () {
 function displayAccessory(accessory, type) {
   let button = document.createElement('button');
   button.className = 'btn btn-outline-primary';
-  button.textContent = 'Add to whislist!';
+  button.textContent = 'Add to wishlist!';
 
   let paragraph = document.createElement('p');
   paragraph.className = 'card-text';
@@ -65,6 +65,7 @@ function displayHats() {
   for (let i = 0; i < HatArray.length; i++) {
     displayAccessory(HatArray[i], 'hat');
   }
+  wish();
 }
 
 // HatNodeList -> from static HTML
@@ -180,6 +181,7 @@ function loadRemoteAccessories(filter) {
     }
     showAccessories(accessoryArray, filter);
     accessoryArray = [];
+    wish();
   };
   request.send();
 }
@@ -204,3 +206,34 @@ function removeElementsFromDOM(type) {
     removeElement[i].remove();
   }
 }
+
+
+/* ----------------- The wishlist ----------------- */
+
+function wish () {
+  let NodeButton = document.querySelectorAll('.card-body button');
+  NodeButton.forEach(function(wishedButton){
+    wishedButton.addEventListener('click', function() {
+      if (wishedButton.classList.contains('clicked'))
+      {
+        wishedButton.textContent = 'Add to wishlist!';
+        wishedButton.classList.remove('clicked', 'btn-outline-danger');
+        wishedButton.classList.add('btn-outline-primary');
+        // function for deleting element from DOM and wishlist
+      } else {
+        wishedButton.textContent = 'Remove';
+        wishedButton.classList.remove('btn-outline-primary');
+        wishedButton.classList.add('clicked', 'btn-outline-danger');
+        let wishedItem = wishedButton.parentNode.parentNode;
+        addToWishList(wishedItem);
+      }
+    });
+  });
+}
+
+function addToWishList(wantedAccessory) {
+  
+}
+
+
+
