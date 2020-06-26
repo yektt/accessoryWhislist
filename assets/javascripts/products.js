@@ -5,17 +5,26 @@ function Accessory(name, price, color, imageHref) {
   this.color = color,
   this.imageHref = imageHref
 }
-
 Accessory.prototype.toString = function () {
   return 'name <' + this.name + '>, color <' + this.color + '>, price <' + this.price + '>, image: <' + this.imageHref + '>';
 }
 
+// --------------------- Creating Buttons
 // creating 'All' button
 let buttonAll = document.createElement('button');
 buttonAll.className = 'btn btn-outline-secondary';
 buttonAll.type = 'button';
 buttonAll.textContent = 'All';
 document.querySelector('.btn-group').appendChild(buttonAll);
+
+// creating 'Gloves' button
+let buttonGloves = document.createElement('button');
+buttonGloves.className = 'nav-link btn btn-outline-secondary mr-3';
+buttonGloves.textContent = 'Gloves';
+let listItem = document.createElement('li');
+listItem.className = 'nav-item';
+listItem.appendChild(buttonGloves);
+document.querySelector('.navbar-nav').appendChild(listItem);
 
 function splitting (splitArray) {
   splitArray = splitArray.split('/');
@@ -26,6 +35,14 @@ function splitting (splitArray) {
 
 // it's taking one accessory object and creating HTML component
 function displayAccessory(accessory, type) {
+
+  const filterByColorNodeList = document.querySelectorAll('.btn-group button');
+  for (let i = 0; i < filterByColorNodeList.length; i++) {
+    if (filterByColorNodeList[i].classList.contains('active')) {
+      filterByColorNodeList[i].classList.remove('active');
+    }
+  }
+  filterByColorNodeList[filterByColorNodeList.length-1].classList.add('active')
   
   let button = document.createElement('button');
   button.className = 'btn btn-outline-primary';
@@ -85,14 +102,6 @@ function displayAccessory(accessory, type) {
   products.appendChild(div);
 }
 
-// for display all the hat objects.
-function displayHats() {
-  for (let i = 0; i < HatArray.length; i++) {
-    displayAccessory(HatArray[i], 'hat');
-  }
-  wish();
-}
-
 // HatNodeList -> from static HTML
 const HatArray = [];
 const HatsNodeList = document.querySelectorAll('.accessory');
@@ -114,13 +123,20 @@ for (let i = 0; i < HatsNodeList.length; i++) {
   HatsNodeList[i].style.display = 'none';
   HatArray.push(createObjectFromHTML(HatsNodeList[i]));
 }
-displayHats();
-
-/* ----------------- Filter By Color ----------------- */
-
+for (let i = 0; i < HatArray.length; i++) {
+  displayAccessory(HatArray[i], 'hat');
+}
+wish();
 
 // the NodeList that contains all of the color-filter-buttons (included All button)
 const filterByColorNodeList = document.querySelectorAll('.btn-group button');
+
+// Listening to all of the color-filter buttons to detect whether any of them is clicked.  
+filterByColorNodeList.forEach(function (colorFilterButton) {
+  colorFilterButton.addEventListener('click', function () {
+    highlightSelectedFilter(colorFilterButton);
+  });
+});
 
 // for changing 'active' class for color filter button
 function highlightSelectedFilter(button) {
@@ -130,7 +146,10 @@ function highlightSelectedFilter(button) {
     }
     cleanDOM();
     if (button.textContent.toLowerCase() == 'hats') {
-      displayHats();
+      for (let i = 0; i < HatArray.length; i++) {
+        displayAccessory(HatArray[i], 'hat');
+      }
+      wish();
     }
   } else {
     for (let i = 0; i < filterByColorNodeList.length; i++) {
@@ -141,12 +160,7 @@ function highlightSelectedFilter(button) {
   button.classList.add('active');
 }
 
-// Listening to all of the color-filter buttons to detect whether any of them is clicked.  
-filterByColorNodeList.forEach(function (colorFilterButton) {
-  colorFilterButton.addEventListener('click', function () {
-    highlightSelectedFilter(colorFilterButton);
-  });
-});
+
 
 function filterAccessoriesByColor(filter) {
   let HTMLNodeList = document.querySelectorAll('.fromData');
@@ -169,17 +183,9 @@ function filterAccessoriesByColor(filter) {
 let accessoryArray = [];
 let accessory;
 
-// creating 'Gloves' button
-let buttonGloves = document.createElement('button');
-buttonGloves.className = 'nav-link btn btn-outline-secondary mr-3';
-buttonGloves.textContent = 'Gloves';
-let listItem = document.createElement('li');
-listItem.className = 'nav-item';
-listItem.appendChild(buttonGloves);
-document.querySelector('.navbar-nav').appendChild(listItem);
-
 // the NodeList that contains all of the color-filter-buttons (included Gloves button)
 const filterByAccessoriesNodeList = document.querySelectorAll('.navbar-nav button');
+filterByAccessoriesNodeList[0].classList.add('active');
 
 // Listening to all of the type-filter buttons to detect whether any of them is clicked.  
 filterByAccessoriesNodeList.forEach(function (typeFilterButton) {

@@ -1,5 +1,7 @@
 // hiding the default example
-document.querySelector('.col-sm-4').style.display = 'none';
+function hideDefault () {
+  document.querySelector('.col-sm-4').style.display = 'none';
+}
 
 function displayAccessory(accessory) {
 
@@ -47,6 +49,16 @@ function displayAccessory(accessory) {
 
   let products = document.getElementById('products');
   products.appendChild(div);
+  
+}
+
+function displayWishList () {
+  hideDefault();
+  let item ;
+  for (let i = 1; i < localStorage.length+1; i++) {
+    item = JSON.parse(localStorage.getItem('accessory'+i));
+    displayAccessory(item);
+  }
 }
 
 function warning() {
@@ -57,13 +69,26 @@ function warning() {
 
 if (localStorage.length != 0) {
   // if there is/are item/s that stored in localStorage, page will display them
-  for (let i = 1; i < localStorage.length+1; i++) {
-    displayAccessory(JSON.parse(localStorage.getItem('accessory'+i)));
-  }
+  displayWishList();
 } else { 
   // if localStorage is empty, the page will warn the user about that there's no item to show
+  hideDefault();
   warning();
 }
+
+function removeFromWishList(key, HTMLcomponent) {
+  let i = key.slice(-1);
+  i = parseInt(i);
+  localStorage.removeItem(key);
+  // givin new keys that start from 1 to all elements that stored in localStorage
+  for (let k = i; k < 3; k++){
+    if (localStorage.getItem('accessory'+(k+1)) != null ){
+      localStorage.setItem('accessory'+k, localStorage.getItem('accessory'+(k+1)));
+      localStorage.removeItem('accessory'+(k+1));
+    }
+  }
+  HTMLcomponent.parentNode.removeChild(HTMLcomponent);
+} 
 
 document.querySelectorAll('.btn-outline-danger').forEach(function (removeBtn) {
  
@@ -74,21 +99,12 @@ document.querySelectorAll('.btn-outline-danger').forEach(function (removeBtn) {
   for (let i = localStorage.length; i > 0; i--){
     let imageHrefLocalStorage = JSON.parse(localStorage.getItem('accessory'+i)).imageHref;
     if (imageHrefHTML.toString() == imageHrefLocalStorage.toString()) {
-      localStorage.removeItem('accessory'+i);
-
-      // givin new keys that start from 1 to all elements that stored in localStorage
-      for (let k = i; k < 3; k++){
-        if (localStorage.getItem('accessory'+(k+1)) != null ){
-          localStorage.setItem('accessory'+k, localStorage.getItem('accessory'+(k+1)));
-          localStorage.removeItem('accessory'+(k+1));
-        }
-      }
+      removeFromWishList('accessory'+i, item);
     }
   }
-  
-  item.parentNode.removeChild(item);
-  if ( localStorage.length == 0) {
+  if ( localStorage.length == 0)
     warning();
-  }
   });
 });
+
+
