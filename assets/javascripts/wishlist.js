@@ -49,6 +49,12 @@ function displayAccessory(accessory) {
   products.appendChild(div);
 }
 
+function warning() {
+  let warning = document.querySelector('.container h2');
+  warning.style.color = '#dc3545';
+  warning.textContent = 'Your wishlist is empty. Please add something first!';
+}
+
 if (localStorage.length != 0) {
   // if there is/are item/s that stored in localStorage, page will display them
   for (let i = 1; i < localStorage.length+1; i++) {
@@ -56,7 +62,26 @@ if (localStorage.length != 0) {
   }
 } else { 
   // if localStorage is empty, the page will warn the user about that there's no item to show
-  let warning = document.querySelector('.container h2');
-  warning.style.color = '#dc3545';
-  warning.textContent = 'Your wishlist is empty. Please add something first!';
+  warning();
 }
+
+
+document.querySelectorAll('.btn-outline-danger').forEach(function (removeBtn) {
+ 
+  removeBtn.addEventListener('click', function () {
+  let item = removeBtn.parentNode.parentNode.parentNode;
+  let imageHrefHTML =item.querySelector('img').src;
+  console.log('HTML' + imageHrefHTML);
+  // removing the item that user would like to remove from wishlist and localStorage
+  for (let i = localStorage.length; i > 0; i--){
+    let imageHrefLocalStorage = JSON.parse(localStorage.getItem('accessory'+i)).imageHref;
+    if (imageHrefHTML.toString() == imageHrefLocalStorage.toString()) {
+      localStorage.removeItem('accessory'+i);
+    }
+  }
+  item.parentNode.removeChild(item);
+  if ( localStorage.length == 0) {
+    warning();
+  }
+  });
+});
