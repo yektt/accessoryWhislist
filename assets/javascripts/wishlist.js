@@ -65,7 +65,6 @@ if (localStorage.length != 0) {
   warning();
 }
 
-
 document.querySelectorAll('.btn-outline-danger').forEach(function (removeBtn) {
  
   removeBtn.addEventListener('click', function () {
@@ -76,7 +75,7 @@ document.querySelectorAll('.btn-outline-danger').forEach(function (removeBtn) {
     let imageHrefLocalStorage = JSON.parse(localStorage.getItem('accessory'+i)).imageHref;
     if (imageHrefHTML.toString() == imageHrefLocalStorage.toString()) {
       localStorage.removeItem('accessory'+i);
-      
+
       // givin new keys that start from 1 to all elements that stored in localStorage
       for (let k = i; k < 3; k++){
         if (localStorage.getItem('accessory'+(k+1)) != null ){

@@ -10,11 +10,36 @@ Accessory.prototype.toString = function () {
   return 'name <' + this.name + '>, color <' + this.color + '>, price <' + this.price + '>, image: <' + this.imageHref + '>';
 }
 
+// creating 'All' button
+let buttonAll = document.createElement('button');
+buttonAll.className = 'btn btn-outline-secondary';
+buttonAll.type = 'button';
+buttonAll.textContent = 'All';
+document.querySelector('.btn-group').appendChild(buttonAll);
+
+function splitting (splitArray) {
+  splitArray = splitArray.split('/');
+  splitArray = splitArray.slice(splitArray.length-5);
+  splitArray = splitArray.join("/");
+  return splitArray;
+}
+
 // it's taking one accessory object and creating HTML component
 function displayAccessory(accessory, type) {
+  
   let button = document.createElement('button');
   button.className = 'btn btn-outline-primary';
   button.textContent = 'Add to wishlist!';
+  let arrImageHref = [];
+  for ( let i = 1; i < localStorage.length+1; i++) {
+    arrImageHref = splitting(JSON.parse(localStorage.getItem('accessory'+i)).imageHref);
+    let splitArr = splitting(accessory.imageHref);
+    
+    if (arrImageHref == splitArr ) {
+      button.className = 'btn btn-outline-danger clicked';
+      button.textContent = 'Remove';
+    } 
+  }
 
   let paragraph = document.createElement('p');
   paragraph.className = 'card-text';
@@ -92,12 +117,7 @@ for (let i = 0; i < HatsNodeList.length; i++) {
 displayHats();
 
 /* ----------------- Filter By Color ----------------- */
-// creating 'All' button
-let buttonAll = document.createElement('button');
-buttonAll.className = 'btn btn-outline-secondary';
-buttonAll.type = 'button';
-buttonAll.textContent = 'All';
-document.querySelector('.btn-group').appendChild(buttonAll);
+
 
 // the NodeList that contains all of the color-filter-buttons (included All button)
 const filterByColorNodeList = document.querySelectorAll('.btn-group button');
@@ -222,6 +242,8 @@ function wish () {
         wishedButton.textContent = 'Add to wishlist!';
         wishedButton.classList.remove('clicked', 'btn-outline-danger');
         wishedButton.classList.add('btn-outline-primary');
+        let imageHrefHTML =wishedItem.querySelector('img').src;
+        removingItems(imageHrefHTML);
         // function for deleting element from DOM and wishlist
       } else if (localStorage.length < 3) {
         wishedButton.textContent = 'Remove';
@@ -229,7 +251,7 @@ function wish () {
         wishedButton.classList.add('clicked', 'btn-outline-danger'); 
         addToWishList(createObjectFromHTML(wishedItem));
       } else {
-        // wish list is full
+        alert('Please remove an item from wish list first!');
       }
     });
   });
@@ -252,4 +274,21 @@ function addToWishList(wantedAccessory) {
 
 if (localStorage.length == 0) {
   console.log('no products storing')
+}
+
+function removingItems (imageHrefHTML) {
+  for (let i = localStorage.length; i > 0; i--){
+    let imageHrefLocalStorage = JSON.parse(localStorage.getItem('accessory'+i)).imageHref;
+    if (imageHrefHTML.toString() == imageHrefLocalStorage.toString()) {
+      localStorage.removeItem('accessory'+i);
+      
+      // givin new keys that start from 1 to all elements that stored in localStorage
+      for (let k = i; k < 3; k++){
+        if (localStorage.getItem('accessory'+(k+1)) != null ){
+          localStorage.setItem('accessory'+k, localStorage.getItem('accessory'+(k+1)));
+          localStorage.removeItem('accessory'+(k+1));
+        }
+      }
+    }
+  }
 }
