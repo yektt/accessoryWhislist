@@ -71,14 +71,22 @@ document.querySelectorAll('.btn-outline-danger').forEach(function (removeBtn) {
   removeBtn.addEventListener('click', function () {
   let item = removeBtn.parentNode.parentNode.parentNode;
   let imageHrefHTML =item.querySelector('img').src;
-  console.log('HTML' + imageHrefHTML);
   // removing the item that user would like to remove from wishlist and localStorage
   for (let i = localStorage.length; i > 0; i--){
     let imageHrefLocalStorage = JSON.parse(localStorage.getItem('accessory'+i)).imageHref;
     if (imageHrefHTML.toString() == imageHrefLocalStorage.toString()) {
       localStorage.removeItem('accessory'+i);
+      
+      // givin new keys that start from 1 to all elements that stored in localStorage
+      for (let k = i; k < 3; k++){
+        if (localStorage.getItem('accessory'+(k+1)) != null ){
+          localStorage.setItem('accessory'+k, localStorage.getItem('accessory'+(k+1)));
+          localStorage.removeItem('accessory'+(k+1));
+        }
+      }
     }
   }
+  
   item.parentNode.removeChild(item);
   if ( localStorage.length == 0) {
     warning();

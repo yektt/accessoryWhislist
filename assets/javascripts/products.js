@@ -223,7 +223,7 @@ function wish () {
         wishedButton.classList.remove('clicked', 'btn-outline-danger');
         wishedButton.classList.add('btn-outline-primary');
         // function for deleting element from DOM and wishlist
-      } else if (localStorage.length < 4) {
+      } else if (localStorage.length < 3) {
         wishedButton.textContent = 'Remove';
         wishedButton.classList.remove('btn-outline-primary');
         wishedButton.classList.add('clicked', 'btn-outline-danger'); 
