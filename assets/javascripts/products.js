@@ -1,4 +1,3 @@
-
 // construction function for Accessories
 function Accessory(name, price, color, imageHref) {
   this.name = name,
@@ -228,7 +227,7 @@ function wish () {
         wishedButton.textContent = 'Remove';
         wishedButton.classList.remove('btn-outline-primary');
         wishedButton.classList.add('clicked', 'btn-outline-danger'); 
-        addToWishList(wishedItem);
+        addToWishList(createObjectFromHTML(wishedItem));
       } else {
         // wish list is full
       }
@@ -237,20 +236,20 @@ function wish () {
 }
 
 function addToWishList(wantedAccessory) {
-  for (let i = 0; i < storeArray.length; i++ ) {
-    let number = i+1
-    localStorage.removeItem('accessory' + number, storeArray[i]);
+  if (localStorage.length == 0)
+  {
+    localStorage.setItem('accessory1', JSON.stringify(wantedAccessory));
+  } else {
+    for (let i = localStorage.length; i > 0; i--){
+      localStorage.setItem('accessory'+ (i+1), localStorage.getItem('accessory'+i));
+      if ( i == 1 )
+      {
+        localStorage.setItem('accessory1', JSON.stringify(wantedAccessory));
+      }
+    }
   }
-  storeArray.unshift(createObjectFromHTML(wantedAccessory));
-  localStorage.setItem('storeArray', JSON.stringify(storeArray));
-  for (let i = 0; i < storeArray.length; i++ ) {
-    let number = i+1
-    localStorage.setItem('accessory' + number, storeArray[i]);
-    //localStorage.getItem('accessory' + number).style.display = 'none';
-  }
-  //console.log(JSON.parse(localStorage.getItem('storeArray')).length);
 }
 
 if (localStorage.length == 0) {
-  console.log('no products storing');
+  console.log('no products storing')
 }
