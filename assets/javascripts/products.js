@@ -26,9 +26,22 @@ listItem.className = 'nav-item';
 listItem.appendChild(buttonGloves);
 document.querySelector('.navbar-nav').appendChild(listItem);
 
-function splitting (splitArray) {
+// --------------------- General Declerations
+// the NodeList that contains all of the color-filter-buttons (included All button)
+const filterByColorNodeList = document.querySelectorAll('.btn-group button');
+
+// HatNodeList -> from static HTML
+const HatArray = [];
+const HatsNodeList = document.querySelectorAll('.accessory');
+let HTMLname, HTMLprice, HTMLcolor, HTMLimageHref;
+
+let accessoryArray = [];
+let storeArray = [];
+let accessory;
+
+function splitting(splitArray) {
   splitArray = splitArray.split('/');
-  splitArray = splitArray.slice(splitArray.length-5);
+  splitArray = splitArray.slice(splitArray.length - 5);
   splitArray = splitArray.join("/");
   return splitArray;
 }
@@ -37,25 +50,30 @@ function splitting (splitArray) {
 function displayAccessory(accessory, type) {
 
   const filterByColorNodeList = document.querySelectorAll('.btn-group button');
+  // making 'active' the chosen color's button
   for (let i = 0; i < filterByColorNodeList.length; i++) {
     if (filterByColorNodeList[i].classList.contains('active')) {
       filterByColorNodeList[i].classList.remove('active');
     }
   }
-  filterByColorNodeList[filterByColorNodeList.length-1].classList.add('active')
-  
+  filterByColorNodeList[filterByColorNodeList.length - 1].classList.add('active')
+
+  // adding all the items 'add to wishlist!' button
   let button = document.createElement('button');
   button.className = 'btn btn-outline-primary';
   button.textContent = 'Add to wishlist!';
   let arrImageHref = [];
-  for ( let i = 1; i < localStorage.length+1; i++) {
-    arrImageHref = splitting(JSON.parse(localStorage.getItem('accessory'+i)).imageHref);
+
+  // checking that if the item has added to the wish list
+  // if yes, adding a 'remove' button instead of 'add to wish list'
+  for (let i = 1; i < localStorage.length + 1; i++) {
+    arrImageHref = splitting(JSON.parse(localStorage.getItem('accessory' + i)).imageHref);
     let splitArr = splitting(accessory.imageHref);
-    
-    if (arrImageHref == splitArr ) {
+
+    if (arrImageHref == splitArr) {
       button.className = 'btn btn-outline-danger clicked';
       button.textContent = 'Remove';
-    } 
+    }
   }
 
   let paragraph = document.createElement('p');
@@ -98,17 +116,18 @@ function displayAccessory(accessory, type) {
   card_body.appendChild(button);
   paragraph.appendChild(em);
 
+  // checking if the image of the item is exist
+  // if not, giving it a new src to show up as default
+  image.onerror = function () {
+    image.src = "https://via.placeholder.com/350x250";
+  }
+
   let products = document.getElementById('products');
   products.appendChild(div);
 }
 
-// HatNodeList -> from static HTML
-const HatArray = [];
-const HatsNodeList = document.querySelectorAll('.accessory');
-let HTMLname, HTMLprice, HTMLcolor, HTMLimageHref;
-
 // for getting informations about hats form HTML part
-function createObjectFromHTML (NodeList) {
+function createObjectFromHTML(NodeList) {
   HTMLprice = NodeList.getElementsByClassName('currency')[0].textContent;
   HTMLimageHref = NodeList.getElementsByClassName('card-img-top')[0].src;
   HTMLname = NodeList.getElementsByClassName('card-body')[0].querySelector('h5').textContent;
@@ -117,19 +136,19 @@ function createObjectFromHTML (NodeList) {
   // creating a Hat object and adding it to the HatArray for storing the hats-data
   const accessory = new Accessory(HTMLname, HTMLprice, HTMLcolor, HTMLimageHref);
   return accessory;
-  
+
 }
+
 for (let i = 0; i < HatsNodeList.length; i++) {
   HatsNodeList[i].style.display = 'none';
   HatArray.push(createObjectFromHTML(HatsNodeList[i]));
 }
+
 for (let i = 0; i < HatArray.length; i++) {
   displayAccessory(HatArray[i], 'hat');
 }
 wish();
 
-// the NodeList that contains all of the color-filter-buttons (included All button)
-const filterByColorNodeList = document.querySelectorAll('.btn-group button');
 
 // Listening to all of the color-filter buttons to detect whether any of them is clicked.  
 filterByColorNodeList.forEach(function (colorFilterButton) {
@@ -160,8 +179,6 @@ function highlightSelectedFilter(button) {
   button.classList.add('active');
 }
 
-
-
 function filterAccessoriesByColor(filter) {
   let HTMLNodeList = document.querySelectorAll('.fromData');
   // all accessories will be removed from page
@@ -179,10 +196,6 @@ function filterAccessoriesByColor(filter) {
   }
 }
 
-/* ----------------- Socks and Sunglasses ----------------- */
-let accessoryArray = [];
-let accessory;
-
 // the NodeList that contains all of the color-filter-buttons (included Gloves button)
 const filterByAccessoriesNodeList = document.querySelectorAll('.navbar-nav button');
 filterByAccessoriesNodeList[0].classList.add('active');
@@ -196,24 +209,30 @@ filterByAccessoriesNodeList.forEach(function (typeFilterButton) {
   });
 });
 
-// 
+// making XML request to read the responsible file
 function loadRemoteAccessories(filter) {
 
   let request = new XMLHttpRequest();
   request.open('GET', './' + filter + '.json');
   request.onload = function () {
-    let accessoriesArray = JSON.parse(request.responseText);
-    for (let i = 0; i < accessoriesArray.length; i++) {
-      accessory = new Accessory(accessoriesArray[i].name, accessoriesArray[i].price, accessoriesArray[i].color, accessoriesArray[i].imageHref);
-      accessoryArray.push(accessory);
+    // if there's a problem with the name of the file, it will give an error about it.
+    try {
+      let accessoriesArray = JSON.parse(request.responseText);
+      for (let i = 0; i < accessoriesArray.length; i++) {
+        accessory = new Accessory(accessoriesArray[i].name, accessoriesArray[i].price, accessoriesArray[i].color, accessoriesArray[i].imageHref);
+        accessoryArray.push(accessory);
+      }
+      showAccessories(accessoryArray, filter);
+      accessoryArray = [];
+      wish();
+    } catch (e) {
+      alert('Something went wrong about file\'s path or name, please be sure you\'ve put your files under to the the right path with right name!');
     }
-    showAccessories(accessoryArray, filter);
-    accessoryArray = [];
-    wish();
   };
   request.send();
 }
 
+// taking an array and sending one-by-one to the displayAccessory function
 function showAccessories(accessoriesArray, type) {
   for (let i = 0; i < accessoriesArray.length; i++) {
     displayAccessory(accessoriesArray[i], type);
@@ -221,6 +240,7 @@ function showAccessories(accessoriesArray, type) {
 }
 
 // for cleaning the DOM, otherwise the objects will show up more than one time.
+// with each click to the accessory type, it will run
 function cleanDOM() {
   removeElementsFromDOM('hat');
   removeElementsFromDOM('socks');
@@ -235,26 +255,23 @@ function removeElementsFromDOM(type) {
   }
 }
 
-
-/* ----------------- The wishlist ----------------- */
-let storeArray = [];
-function wish () {
+// when the user clicked 'add to wish list' or 'remove' on the product.html:
+function wish() {
   let NodeButton = document.querySelectorAll('.card-body button');
-  NodeButton.forEach(function(wishedButton){
-    wishedButton.addEventListener('click', function() {
+  NodeButton.forEach(function (wishedButton) {
+    wishedButton.addEventListener('click', function () {
       let wishedItem = wishedButton.parentNode.parentNode.parentNode;
-      if (wishedButton.classList.contains('clicked'))
-      {
+      if (wishedButton.classList.contains('clicked')) {
         wishedButton.textContent = 'Add to wishlist!';
         wishedButton.classList.remove('clicked', 'btn-outline-danger');
         wishedButton.classList.add('btn-outline-primary');
-        let imageHrefHTML =wishedItem.querySelector('img').src;
+        let imageHrefHTML = wishedItem.querySelector('img').src;
         removingItems(imageHrefHTML);
         // function for deleting element from DOM and wishlist
       } else if (localStorage.length < 3) {
         wishedButton.textContent = 'Remove';
         wishedButton.classList.remove('btn-outline-primary');
-        wishedButton.classList.add('clicked', 'btn-outline-danger'); 
+        wishedButton.classList.add('clicked', 'btn-outline-danger');
         addToWishList(createObjectFromHTML(wishedItem));
       } else {
         alert('Please remove an item from wish list first!');
@@ -263,36 +280,34 @@ function wish () {
   });
 }
 
+// if there is less then 3 item in the wishlist/localStorage,
+// it will be added to the wish list
 function addToWishList(wantedAccessory) {
-  if (localStorage.length == 0)
-  {
+  if (localStorage.length == 0) {
     localStorage.setItem('accessory1', JSON.stringify(wantedAccessory));
   } else {
-    for (let i = localStorage.length; i > 0; i--){
-      localStorage.setItem('accessory'+ (i+1), localStorage.getItem('accessory'+i));
-      if ( i == 1 )
-      {
+    // adding the item by sorting other items first
+    for (let i = localStorage.length; i > 0; i--) {
+      localStorage.setItem('accessory' + (i + 1), localStorage.getItem('accessory' + i));
+      if (i == 1) {
         localStorage.setItem('accessory1', JSON.stringify(wantedAccessory));
       }
     }
   }
 }
 
-if (localStorage.length == 0) {
-  console.log('no products storing')
-}
-
-function removingItems (imageHrefHTML) {
-  for (let i = localStorage.length; i > 0; i--){
-    let imageHrefLocalStorage = JSON.parse(localStorage.getItem('accessory'+i)).imageHref;
+// removing the items from wishlist
+function removingItems(imageHrefHTML) {
+  for (let i = localStorage.length; i > 0; i--) {
+    let imageHrefLocalStorage = JSON.parse(localStorage.getItem('accessory' + i)).imageHref;
     if (imageHrefHTML.toString() == imageHrefLocalStorage.toString()) {
-      localStorage.removeItem('accessory'+i);
-      
+      localStorage.removeItem('accessory' + i);
+
       // givin new keys that start from 1 to all elements that stored in localStorage
-      for (let k = i; k < 3; k++){
-        if (localStorage.getItem('accessory'+(k+1)) != null ){
-          localStorage.setItem('accessory'+k, localStorage.getItem('accessory'+(k+1)));
-          localStorage.removeItem('accessory'+(k+1));
+      for (let k = i; k < 3; k++) {
+        if (localStorage.getItem('accessory' + (k + 1)) != null) {
+          localStorage.setItem('accessory' + k, localStorage.getItem('accessory' + (k + 1)));
+          localStorage.removeItem('accessory' + (k + 1));
         }
       }
     }
