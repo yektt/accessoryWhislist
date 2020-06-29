@@ -3,6 +3,7 @@ function hideDefault () {
   document.querySelector('.col-sm-4').style.display = 'none';
 }
 
+// it's taking one accessory object and creating HTML component
 function displayAccessory(accessory) {
 
   let button = document.createElement('button');
@@ -52,6 +53,9 @@ function displayAccessory(accessory) {
   
 }
 
+// first hiding the default example
+// later sending all the elements that have stored in localStorage 
+// to the displayAccessory function to show on the page
 function displayWishList () {
   hideDefault();
   let item ;
@@ -61,6 +65,7 @@ function displayWishList () {
   }
 }
 
+// if there is not any element to show in the localStorage
 function warning() {
   let warning = document.querySelector('.container h2');
   warning.style.color = '#dc3545';
@@ -76,6 +81,7 @@ if (localStorage.length != 0) {
   warning();
 }
 
+// removing from the localStorage/wishlist
 function removeFromWishList(key, HTMLcomponent) {
   let i = key.slice(-1);
   i = parseInt(i);
@@ -90,6 +96,7 @@ function removeFromWishList(key, HTMLcomponent) {
   HTMLcomponent.parentNode.removeChild(HTMLcomponent);
 } 
 
+// listening all the 'remove' button
 document.querySelectorAll('.btn-outline-danger').forEach(function (removeBtn) {
  
   removeBtn.addEventListener('click', function () {
@@ -102,6 +109,7 @@ document.querySelectorAll('.btn-outline-danger').forEach(function (removeBtn) {
       removeFromWishList('accessory'+i, item);
     }
   }
+  // after every removing action, localStorage will be checked to give warning
   if ( localStorage.length == 0)
     warning();
   });
