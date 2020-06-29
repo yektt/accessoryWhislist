@@ -39,6 +39,11 @@ let accessoryArray = [];
 let storeArray = [];
 let accessory;
 
+for (let i = 0; i < HatsNodeList.length; i++) {
+  HatsNodeList[i].style.display = 'none';
+  HatArray.push(createObjectFromHTML(HatsNodeList[i]));
+}
+
 function splitting(splitArray) {
   splitArray = splitArray.split('/');
   splitArray = splitArray.slice(splitArray.length - 5);
@@ -140,15 +145,12 @@ function createObjectFromHTML(NodeList) {
 
 // for displaying Hats 
 function HatDisplay() {
-  for (let i = 0; i < HatsNodeList.length; i++) {
-    HatsNodeList[i].style.display = 'none';
-    HatArray.push(createObjectFromHTML(HatsNodeList[i]));
-  }
   for (let i = 0; i < HatArray.length; i++) {
     displayAccessory(HatArray[i], 'hat');
   }
   wish();
 }
+// when page is opened, hat will display automatically.
 HatDisplay();
 
 // Listening to all of the color-filter buttons to detect whether any of them is clicked.  
@@ -166,10 +168,7 @@ function highlightSelectedFilter(button) {
     }
     cleanDOM();
     if (button.textContent.toLowerCase() == 'hats') {
-      for (let i = 0; i < HatArray.length; i++) {
-        displayAccessory(HatArray[i], 'hat');
-      }
-      wish();
+      HatDisplay();
     }
   } else {
     for (let i = 0; i < filterByColorNodeList.length; i++) {
