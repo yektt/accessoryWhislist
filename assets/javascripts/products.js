@@ -126,29 +126,30 @@ function displayAccessory(accessory, type) {
   products.appendChild(div);
 }
 
-// for getting informations about hats form HTML part
+// for getting informations form HTML part
 function createObjectFromHTML(NodeList) {
   HTMLprice = NodeList.getElementsByClassName('currency')[0].textContent;
   HTMLimageHref = NodeList.getElementsByClassName('card-img-top')[0].src;
   HTMLname = NodeList.getElementsByClassName('card-body')[0].querySelector('h5').textContent;
   HTMLcolor = NodeList.getElementsByClassName('card-body')[0].querySelector('em').textContent;
 
-  // creating a Hat object and adding it to the HatArray for storing the hats-data
+  // creating an Accessory object
   const accessory = new Accessory(HTMLname, HTMLprice, HTMLcolor, HTMLimageHref);
   return accessory;
-
 }
 
-for (let i = 0; i < HatsNodeList.length; i++) {
-  HatsNodeList[i].style.display = 'none';
-  HatArray.push(createObjectFromHTML(HatsNodeList[i]));
+// for displaying Hats 
+function HatDisplay() {
+  for (let i = 0; i < HatsNodeList.length; i++) {
+    HatsNodeList[i].style.display = 'none';
+    HatArray.push(createObjectFromHTML(HatsNodeList[i]));
+  }
+  for (let i = 0; i < HatArray.length; i++) {
+    displayAccessory(HatArray[i], 'hat');
+  }
+  wish();
 }
-
-for (let i = 0; i < HatArray.length; i++) {
-  displayAccessory(HatArray[i], 'hat');
-}
-wish();
-
+HatDisplay();
 
 // Listening to all of the color-filter buttons to detect whether any of them is clicked.  
 filterByColorNodeList.forEach(function (colorFilterButton) {

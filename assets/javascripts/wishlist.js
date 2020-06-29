@@ -1,5 +1,5 @@
 // hiding the default example
-function hideDefault () {
+function hideDefault() {
   document.querySelector('.col-sm-4').style.display = 'none';
 }
 
@@ -50,17 +50,17 @@ function displayAccessory(accessory) {
 
   let products = document.getElementById('products');
   products.appendChild(div);
-  
+
 }
 
 // first hiding the default example
 // later sending all the elements that have stored in localStorage 
 // to the displayAccessory function to show on the page
-function displayWishList () {
+function displayWishList() {
   hideDefault();
-  let item ;
-  for (let i = 1; i < localStorage.length+1; i++) {
-    item = JSON.parse(localStorage.getItem('accessory'+i));
+  let item;
+  for (let i = 1; i < localStorage.length + 1; i++) {
+    item = JSON.parse(localStorage.getItem('accessory' + i));
     displayAccessory(item);
   }
 }
@@ -75,7 +75,7 @@ function warning() {
 if (localStorage.length != 0) {
   // if there is/are item/s that stored in localStorage, page will display them
   displayWishList();
-} else { 
+} else {
   // if localStorage is empty, the page will warn the user about that there's no item to show
   hideDefault();
   warning();
@@ -87,32 +87,30 @@ function removeFromWishList(key, HTMLcomponent) {
   i = parseInt(i);
   localStorage.removeItem(key);
   // givin new keys that start from 1 to all elements that stored in localStorage
-  for (let k = i; k < 3; k++){
-    if (localStorage.getItem('accessory'+(k+1)) != null ){
-      localStorage.setItem('accessory'+k, localStorage.getItem('accessory'+(k+1)));
-      localStorage.removeItem('accessory'+(k+1));
+  for (let k = i; k < 3; k++) {
+    if (localStorage.getItem('accessory' + (k + 1)) != null) {
+      localStorage.setItem('accessory' + k, localStorage.getItem('accessory' + (k + 1)));
+      localStorage.removeItem('accessory' + (k + 1));
     }
   }
   HTMLcomponent.parentNode.removeChild(HTMLcomponent);
-} 
+}
 
 // listening all the 'remove' button
 document.querySelectorAll('.btn-outline-danger').forEach(function (removeBtn) {
- 
+
   removeBtn.addEventListener('click', function () {
-  let item = removeBtn.parentNode.parentNode.parentNode;
-  let imageHrefHTML =item.querySelector('img').src;
-  // removing the item that user would like to remove from wishlist and localStorage
-  for (let i = localStorage.length; i > 0; i--){
-    let imageHrefLocalStorage = JSON.parse(localStorage.getItem('accessory'+i)).imageHref;
-    if (imageHrefHTML.toString() == imageHrefLocalStorage.toString()) {
-      removeFromWishList('accessory'+i, item);
+    let item = removeBtn.parentNode.parentNode.parentNode;
+    let imageHrefHTML = item.querySelector('img').src;
+    // removing the item that user would like to remove from wishlist and localStorage
+    for (let i = localStorage.length; i > 0; i--) {
+      let imageHrefLocalStorage = JSON.parse(localStorage.getItem('accessory' + i)).imageHref;
+      if (imageHrefHTML.toString() == imageHrefLocalStorage.toString()) {
+        removeFromWishList('accessory' + i, item);
+      }
     }
-  }
-  // after every removing action, localStorage will be checked to give warning
-  if ( localStorage.length == 0)
-    warning();
+    // after every removing action, localStorage will be checked to give warning
+    if (localStorage.length == 0)
+      warning();
   });
 });
-
-
