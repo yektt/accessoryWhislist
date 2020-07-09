@@ -11,17 +11,17 @@ Accessory.prototype.toString = function () {
 
 // --------------------- Creating Buttons
 // creating 'All' button
-let buttonAll = document.createElement('button');
+const buttonAll = document.createElement('button');
 buttonAll.className = 'btn btn-outline-secondary';
 buttonAll.type = 'button';
 buttonAll.textContent = 'All';
 document.querySelector('.btn-group').appendChild(buttonAll);
 
 // creating 'Gloves' button
-let buttonGloves = document.createElement('button');
+const buttonGloves = document.createElement('button');
 buttonGloves.className = 'nav-link btn btn-outline-secondary mr-3';
 buttonGloves.textContent = 'Gloves';
-let listItem = document.createElement('li');
+const listItem = document.createElement('li');
 listItem.className = 'nav-item';
 listItem.appendChild(buttonGloves);
 document.querySelector('.navbar-nav').appendChild(listItem);
@@ -64,7 +64,7 @@ function displayAccessory(accessory, type) {
   filterByColorNodeList[filterByColorNodeList.length - 1].classList.add('active')
 
   // adding all the items 'add to wishlist!' button
-  let button = document.createElement('button');
+  const button = document.createElement('button');
   button.className = 'btn btn-outline-primary';
   button.textContent = 'Add to wishlist!';
   let arrImageHref = [];
@@ -81,33 +81,33 @@ function displayAccessory(accessory, type) {
     }
   }
 
-  let paragraph = document.createElement('p');
+  const paragraph = document.createElement('p');
   paragraph.className = 'card-text';
   paragraph.textContent = 'Color: '
 
-  let em = document.createElement('em');
+  const em = document.createElement('em');
   em.textContent = accessory.color;
 
-  let h5 = document.createElement('h5');
+  const h5 = document.createElement('h5');
   h5.className = 'card-title';
   h5.textContent = accessory.name;
 
-  let card_body = document.createElement('div');
+  const card_body = document.createElement('div');
   card_body.className = 'card-body text-center';
 
-  let image = document.createElement('img');
+  const image = document.createElement('img');
   image.className = 'card-img-top';
   image.src = accessory.imageHref;
   image.alt = 'Image of ' + accessory.name.toLowerCase();
 
-  let currency = document.createElement('div');
+  const currency = document.createElement('div');
   currency.className = 'currency btn btn-light disabled'
   currency.textContent = accessory.price;
 
-  let card = document.createElement('div');
+  const card = document.createElement('div');
   card.className = 'card my-3';
 
-  let div = document.createElement('div');
+  const div = document.createElement('div');
   div.className = 'accessory col-sm-4 fromData';
   div.classList.add(accessory.color);
   div.classList.add(type);
@@ -127,7 +127,7 @@ function displayAccessory(accessory, type) {
     image.src = "https://via.placeholder.com/350x250";
   }
 
-  let products = document.getElementById('products');
+  const products = document.getElementById('products');
   products.appendChild(div);
 }
 
@@ -180,7 +180,7 @@ function highlightSelectedFilter(button) {
 }
 
 function filterAccessoriesByColor(filter) {
-  let HTMLNodeList = document.querySelectorAll('.fromData');
+  const HTMLNodeList = document.querySelectorAll('.fromData');
   // all accessories will be removed from page
   for (let i = 0; i < HTMLNodeList.length; i++) {
     HTMLNodeList[i].style.display = 'none';
