@@ -211,25 +211,24 @@ filterByAccessoriesNodeList.forEach(function (typeFilterButton) {
 
 // making XML request to read the responsible file
 function loadRemoteAccessories(filter) {
+	fetch(`./${filter}.json`)
+		.then(response => response.json())
+		.then(accessoriesArray  => {
+			const accessoryComponents = [];
 
-  let request = new XMLHttpRequest();
-  request.open('GET', './' + filter + '.json');
-  request.onload = function () {
-    // if there's a problem with the name of the file, it will give an error about it.
-    try {
-      let accessoriesArray = JSON.parse(request.responseText);
-      for (let i = 0; i < accessoriesArray.length; i++) {
-        accessory = new Accessory(accessoriesArray[i].name, accessoriesArray[i].price, accessoriesArray[i].color, accessoriesArray[i].imageHref);
-        accessoryArray.push(accessory);
-      }
-      showAccessories(accessoryArray, filter);
-      accessoryArray = [];
-      wish();
-    } catch (e) {
-      alert('Something went wrong about file\'s path or name, please be sure you\'ve put your files under to the the right path with right name!');
-    }
-  };
-  request.send();
+			for (let i = 0; i < accessoriesArray.length; i++) {
+				accessory = new Accessory(accessoriesArray[i].name, accessoriesArray[i].price, accessoriesArray[i].color, accessoriesArray[i].imageHref);
+				accessoryComponents.push(accessory);
+			}
+
+			showAccessories(accessoryComponents , filter);
+
+			wish();
+		})
+		.catch(e => {
+			console.log(e);
+			alert('Something went wrong about file\'s path or name, please be sure you\'ve put your files under to the the right path with right name!');
+		});
 }
 
 // taking an array and sending one-by-one to the displayAccessory function
